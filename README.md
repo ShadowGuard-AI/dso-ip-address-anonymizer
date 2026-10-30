@@ -1,3 +1,5 @@
+![Banner](banner.png)
+
 # dso-ip-address-anonymizer
 Anonymizes IP addresses in logs or datasets by replacing them with randomly generated, non-routable IP addresses (e.g., from the 192.168.0.0/16 range) or by rounding them to the /24 or /16 prefix, thus preserving network context while removing individual IP traceability. Can handle both IPv4 and IPv6. - Focused on Tools for sanitizing and obfuscating sensitive data within text files and structured data formats
 
