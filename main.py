@@ -62,6 +62,11 @@ def anonymize_ip_address(ip_address_str, method='random'):
                  return ip_address_str
 
         elif method == 'prefix24':
+            # The prefix methods merge by design rather than by accident:
+            # every address inside the block maps to the same network
+            # address, so up to 256 distinct hosts read as one. That is
+            # the privacy trade this method sells, and it also means the
+            # output cannot be used to count hosts, only blocks.
             if isinstance(ip_address, ipaddress.IPv4Address):
                 network = ipaddress.ip_network(f"{ip_address_str}/24", strict=False)
                 return str(network.network_address)
@@ -120,6 +125,16 @@ def anonymize_text(text, method='random'):
         Within one call, each distinct original address is mapped to one
         replacement and that replacement is reused at every occurrence.
     """
+    # The map is keyed by the literal text matched, not by the parsed
+    # address, so one address written two ways (an IPv6 address spelled
+    # compressed in one line and expanded in another, or in its
+    # IPv4-embedded form) is treated as two different addresses and gets
+    # two different replacements: the identity splits instead of holding.
+    # The reverse also happens under the random method: replacements are
+    # drawn from the private ranges with no check against replacements
+    # already handed out, so two different originals can land on the same
+    # private address and merge into one in the output. Neither direction
+    # is counted or logged.
     mapping = {}
     count = 0
 
